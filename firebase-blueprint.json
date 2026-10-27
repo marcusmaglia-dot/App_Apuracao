@@ -1,0 +1,49 @@
+{
+  "entities": {
+    "SimulationScenario": {
+      "title": "SimulationScenario",
+      "description": "Cenário customizado de simulação da curva de probabilidade eleitoral salvo pelo usuário",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador único do cenário",
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID do usuário criador",
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Título descritivo do cenário",
+          "maxLength": 100
+        },
+        "params": {
+          "type": "object",
+          "description": "Parâmetros de migração e abstenção definidos"
+        },
+        "probabilidadeResultanteC1": {
+          "type": "number",
+          "description": "Probabilidade resultante calculada para Candidato 1"
+        },
+        "probabilidadeResultanteC2": {
+          "type": "number",
+          "description": "Probabilidade resultante calculada para Candidato 2"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp de criação"
+        }
+      },
+      "required": ["id", "userId", "name", "params", "probabilidadeResultanteC1", "probabilidadeResultanteC2", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/scenarios/{scenarioId}": {
+      "schema": "SimulationScenario",
+      "description": "Cenários de probabilidade salvos pelo usuário autenticado"
+    }
+  }
+}

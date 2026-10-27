@@ -1,0 +1,6 @@
+{
+  "name": "Apuração Eleições 2026 - TSE Totalização & Comparativo",
+  "description": "Painel de resultados oficiais das Eleições 2026 para Presidente da República do Brasil: dados de 1º turno, apuração ao vivo do 2º turno e análise comparativa por estado com abstenções e votos nominais.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

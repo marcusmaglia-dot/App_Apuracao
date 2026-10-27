@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidSimulationScenario(data) {
+      return data.keys().hasAll(['id', 'userId', 'name', 'params', 'probabilidadeResultanteC1', 'probabilidadeResultanteC2', 'createdAt'])
+        && data.keys().hasOnly(['id', 'userId', 'name', 'params', 'probabilidadeResultanteC1', 'probabilidadeResultanteC2', 'createdAt'])
+        && data.id is string && data.id.size() <= 128
+        && data.userId is string && data.userId == request.auth.uid
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.params is map
+        && data.probabilidadeResultanteC1 is number
+        && data.probabilidadeResultanteC2 is number
+        && data.createdAt is string && data.createdAt.size() <= 50;
+    }
+
+    // User-scoped saved scenarios
+    match /users/{userId}/scenarios/{scenarioId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && isValidId(scenarioId)
+        && isValidSimulationScenario(request.resource.data);
+      allow update: if isOwner(userId)
+        && isValidId(scenarioId)
+        && isValidSimulationScenario(request.resource.data)
+        && request.resource.data.id == resource.data.id
+        && request.resource.data.userId == resource.data.userId;
+      allow delete: if isOwner(userId);
+    }
+  }
+}
